@@ -3,8 +3,10 @@ import torchaudio
 import configparser
 import torch
 import whisper
-from whisperx import load_align_model, align
-from whisperx.diarize import assign_word_speakers
+from transformers import pipeline
+from speechbox import ASRDiarizationPipeline
+
+
 
 config = configparser.ConfigParser()
 
@@ -23,23 +25,17 @@ with open("first_test.rttm", "w") as rttm:
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model_name = "large"
-model = whisper.load_model(model_name, DEVICE)
-script = model.transcribe("first_test_trimmed.wav")
+asr_pipeline = pipeline(
+    "automatic-speech-recognition",
+    model="openai/whisper-large",
+)
 
-model_a, metadata = load_align_model(language_code=script["language"], device=DEVICE)
-script_aligned = align(script["segments"], model_a, metadata, "first_test_trimmed.wav", DEVICE)
+asr_pipeline(
+    sample["audio"].copy(),
+    generate_kwargs={"max_new_tokens": 256},
+    return_timestamps=True,
+)
 
-# Align Speakers
-result_segments, word_seg = list(assign_word_speakers(
-    diarization, script_aligned).values())
-transcribed = []
-for result_segment in result_segments:
-    transcribed.append(
-        {
-            "start": result_segment["start"],
-            "end": result_segment["end"],
-            "text": result_segment["text"],
-            "speaker": result_segment["speaker"],
-        }
-    )
+pipeline = ASRDiarizationPipeline(
+    asr_pipeline=asr_pipeline, diarization_pipeline=diarization_pipeline
+)
