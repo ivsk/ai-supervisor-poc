@@ -34,6 +34,6 @@ class Summarizer(BaseFile):
         model = ChatOpenAI(model="gpt-4", openai_api_key=openai_key)
 
         output_parser = StrOutputParser()
-        prompt_value = prompt.invoke({"conversation": f"{transcript}"})
+        prompt_value = prompt.invoke({"sample": f"{transcript}"})
         message = model.invoke(prompt_value)
         output_dict = output_parser.invoke(message)

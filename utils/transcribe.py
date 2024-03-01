@@ -7,7 +7,7 @@ class Transcriber(BaseFile):
     def __init__(self, path):
         super().__init__(path)
         self.validate()
-        self.devices = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.devices = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def validate(self):
         valid_extensions = [".mp3", ".wav", ".flac", ".aac", ".mp4"]

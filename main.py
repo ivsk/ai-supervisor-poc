@@ -40,9 +40,9 @@ if __name__ == "__main__":
 
     if args.command == "audioprocessor":
         processor = AudioProcessor(args.file_path)
-        if args.type == "start" and args.seconds > 0:
+        if args.trim_type == "start" and args.seconds > 0:
             processor.remove_first_n_seconds(args.seconds)
-        elif args.type == "end" and args.seconds > 0:
+        elif args.trim_type == "end" and args.seconds > 0:
             processor.remove_last_n_seconds(args.seconds)
 
     elif args.command == 'transcriber':
