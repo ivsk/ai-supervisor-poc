@@ -2,7 +2,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 import configparser
-from validator import BaseFile
+from utils.validator import BaseFile
+import json
+import os
 
 
 class Summarizer(BaseFile):
@@ -34,6 +36,8 @@ class Summarizer(BaseFile):
         model = ChatOpenAI(model="gpt-4", openai_api_key=openai_key)
 
         output_parser = StrOutputParser()
-        prompt_value = prompt.invoke({"conversation": f"{transcript}"})
+        prompt_value = prompt.invoke({"sample": f"{transcript}"})
         message = model.invoke(prompt_value)
         output_dict = output_parser.invoke(message)
+        with open(f"{os.path.splitext(self.path)[0]}.json", "w") as f:
+            json.dump(output_dict)
