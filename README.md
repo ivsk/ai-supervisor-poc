@@ -1,6 +1,7 @@
 # Data preprocessing CLI tool
 
-This CLI tool supports 
+This CLI tool was created with the purpose of producing question-answer pairs by transcribing and summarizing audio/video files that can later be used to fine-tune an LLM model.
+
 
 ## Installation
 
