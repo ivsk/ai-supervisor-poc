@@ -1,8 +1,6 @@
-from pytube import YouTube
 import os
 import subprocess
-import datetime
-from validator import BaseFile
+from utils.validator import BaseFile
 
 class AudioProcessor(BaseFile):
     def __init__(self, path):

@@ -1,6 +1,6 @@
 import whisper
 import os
-from validator import BaseFile
+from utils.validator import BaseFile
 import torch
 
 class Transcriber(BaseFile):

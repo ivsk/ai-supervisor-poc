@@ -2,7 +2,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 import configparser
-from validator import BaseFile
+from utils.validator import BaseFile
 
 
 class Summarizer(BaseFile):
