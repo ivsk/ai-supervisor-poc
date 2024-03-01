@@ -2,59 +2,43 @@ from pytube import YouTube
 import os
 import subprocess
 import datetime
+from validator import BaseFile
 
-class AudioProcessor:
-    def __init__(self, url):
-        self.url = url
-        self.download_path = ''
-        self.filename = ''
-        self.file_extension = '.mp4'
+class AudioProcessor(BaseFile):
+    def __init__(self, path):
+        super().__init__(path)
+        self.validate()
+        self.output_path = self.__split_path()
 
-    def download_audio(self, default_suffix="_audio_file"):
-        yt = YouTube(self.url)
-        audio_stream = yt.streams.get_audio_only()
-        self.filename = yt.title + default_suffix +self.file_extension
-        audio_stream.download(output_path=self.download_path, filename=self.filename)
-        print(f"Downloaded audio: {self.filename}")
+    def validate(self):
+        valid_extensions = [".mp3", ".wav", ".flac", ".aac", ".mp4"]
+        self._validate_extension(valid_extensions)
 
-    def convert_mp4_to_wav(self, new_extension='.wav'):
-        input_file = os.path.join(self.download_path, self.filename)
-        self.filename = os.path.splitext(self.filename)[0] + new_extension
-        output_file = os.path.join(self.download_path, self.filename)
-        command = ['ffmpeg', '-i', input_file, '-vn', '-acodec', 'pcm_s16le', '-ar', '44100', '-ac', '2', output_file]
+    def __split_path(self):
+        split_path = os.path.splitext(self.path)
+        return split_path[0] + "_trimmed" + split_path[1]
+
+    def remove_first_n_seconds(self, start_time):
+        command = ['ffmpeg', '-i', self.path, '-ss', str(start_time), '-acodec', 'copy', self.output_path]
         try:
             subprocess.run(command, check=True)
-            print(f"Conversion successful: {output_file}")
-        except subprocess.CalledProcessError as e:
-            print(f"An error occurred during conversion: {e}")
-
-    def remove_first_n_seconds(self, start_time, new_filename_suffix='_trimmed'):
-        input_file = os.path.join(self.download_path, self.filename)
-        self.filename = os.path.splitext(self.filename)[0] + new_filename_suffix + os.path.splitext(self.filename)[1]
-        output_file = os.path.join(self.download_path, self.filename)
-        command = ['ffmpeg', '-i', input_file, '-ss', str(start_time), '-acodec', 'copy', output_file]
-        try:
-            subprocess.run(command, check=True)
-            print(f"Successfully removed the first {start_time} seconds: {output_file}")
+            print(f"Successfully removed the first {start_time} seconds: {self.output_path}")
         except subprocess.CalledProcessError as e:
             print(f"An error occurred: {e}")
 
-    def remove_last_n_seconds(self, end_time, new_filename_suffix='_last_trimmed'):
-        input_file = os.path.join(self.download_path, self.filename)
+    def remove_last_n_seconds(self, end_time):
+
         # Getting the total duration of the audio
         command = ['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of',
-                   'default=noprint_wrappers=1:nokey=1', input_file]
+                   'default=noprint_wrappers=1:nokey=1', self.path]
         result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
         total_duration = float(result.stdout)
 
         # Calculate the start time for ffmpeg to stop recording (total duration - end_time)
         start_time = total_duration - end_time
-
-        self.filename = os.path.splitext(self.filename)[0] + new_filename_suffix + os.path.splitext(self.filename)[1]
-        output_file = os.path.join(self.download_path, self.filename)
-        command = ['ffmpeg', '-i', input_file, '-t', str(start_time), '-acodec', 'copy', output_file]
+        command = ['ffmpeg', '-i', self.path, '-t', str(start_time), '-acodec', 'copy', self.output_path]
         try:
             subprocess.run(command, check=True)
-            print(f"Successfully removed the last {end_time} seconds: {output_file}")
+            print(f"Successfully removed the last {end_time} seconds: {self.output_path}")
         except subprocess.CalledProcessError as e:
             print(f"An error occurred: {e}")
