@@ -14,7 +14,7 @@ class Transcriber(BaseFile):
         valid_extensions = [".mp3", ".wav", ".flac", ".aac", ".mp4"]
         self._validate_extension(valid_extensions)
 
-    def transcribe(self, model_type):
+    def transcribe(self):
         model = whisper.load_model(self.model_type, device=self.devices)
         result = model.transcribe(self.path)
         with open(os.path.splitext(self.path)[0] + ".txt", "w") as f:
