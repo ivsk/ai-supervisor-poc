@@ -22,7 +22,6 @@ if __name__ == "__main__":
     parser_audioprocessor.add_argument('--trim_type', type=str, required=True, choices=['start', 'end'], help='Type of trimming')
     parser_audioprocessor.add_argument('--seconds', type=int, help='Number of seconds to trim')
 
-
     # Transcriber
     parser_transcriber = subparsers.add_parser('transcriber', help='Transcribe audio files')
     parser_transcriber.add_argument('--file_path', type=str, required=True, help='Path to the audio file to be transcribed')
@@ -38,7 +37,7 @@ if __name__ == "__main__":
         downloader = Downloader(args.url)
         downloader.download_audio()
 
-    if args.command == "audioprocessor":
+    elif args.command == "audioprocessor":
         processor = AudioProcessor(args.file_path)
         if args.trim_type == "start" and args.seconds > 0:
             processor.remove_first_n_seconds(args.seconds)
@@ -54,3 +53,7 @@ if __name__ == "__main__":
         summarizer = Summarizer(args.file_path, args.model_type)
         print(f"Summarizing {args.file_path} with model {args.model_type}")
         summarizer.summarize()
+
+    else:
+        raise NotImplementedError(f"Error, the requested command: {args.command} does not exist or has not been "
+                                  f"implemented yet")

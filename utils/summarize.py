@@ -6,7 +6,6 @@ from utils.validator import BaseFile
 import json
 import os
 
-
 class Summarizer(BaseFile):
 
     def __init__(self, path, openai_model):
@@ -33,7 +32,7 @@ class Summarizer(BaseFile):
 
         openai_key, metaprompt = self.get_config()
         prompt = ChatPromptTemplate.from_template(metaprompt)
-        model = ChatOpenAI(model="gpt-4", openai_api_key=openai_key)
+        model = ChatOpenAI(model=self.openai_model, openai_api_key=openai_key)
 
         output_parser = StrOutputParser()
         prompt_value = prompt.invoke({"sample": f"{transcript}"})
