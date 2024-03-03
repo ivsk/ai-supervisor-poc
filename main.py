@@ -46,7 +46,7 @@ if __name__ == "__main__":
             processor.remove_last_n_seconds(args.seconds)
 
     elif args.command == 'transcriber':
-        transcriber = Transcriber(args.file_path)
+        transcriber = Transcriber(args.file_path, args.model_type)
         print(f"Transcribing {args.file_path} using Whisper model {args.model_type}")
         transcriber.transcribe()
 
