@@ -25,6 +25,7 @@ if __name__ == "__main__":
     # Transcriber
     parser_transcriber = subparsers.add_parser('transcriber', help='Transcribe audio files')
     parser_transcriber.add_argument('--file_path', type=str, required=True, help='Path to the audio file to be transcribed')
+    parser_transcriber.add_argument('--model_type', type=str, required=True, choices=["tiny", "base", "small", "medium", "large"], help='Select the whisper model used for transcription')
 
     # Summarizer
     parser_summarizer = subparsers.add_parser('summarizer', help='Summarize transcriptions')
@@ -46,7 +47,7 @@ if __name__ == "__main__":
 
     elif args.command == 'transcriber':
         transcriber = Transcriber(args.file_path)
-        print(f"Transcribing {args.file_path}")
+        print(f"Transcribing {args.file_path} using Whisper model {args.model_type}")
         transcriber.transcribe()
 
     elif args.command == 'summarizer':
